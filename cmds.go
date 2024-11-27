@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -26,7 +26,7 @@ func postForm(pathname string, data url.Values) (r JSONResponse, err error) {
 		return r, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return r, err
 	}
@@ -77,7 +77,7 @@ func actionStartServer(c *cli.Context) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := ioutil.WriteFile("/var/run/gosuv.pid", []byte(strconv.Itoa(cmd.Process.Pid)), 0644); err != nil {
+		if err := os.WriteFile("/var/run/gosuv.pid", []byte(strconv.Itoa(cmd.Process.Pid)), 0644); err != nil {
 			log.Fatalln(err)
 		}
 		select {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -31,7 +30,7 @@ func readConf(filename string) (c Configuration, err error) {
 	c.Server.Addr = ":11313" // in memory of 08-31 13:13
 	c.Client.ServerURL = "http://localhost:11313"
 
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		data = []byte("")
 	}
@@ -44,6 +43,6 @@ func readConf(filename string) (c Configuration, err error) {
 		os.MkdirAll(cfgDir, 0755)
 	}
 	data, _ = yaml.Marshal(c)
-	err = ioutil.WriteFile(filename, data, 0644)
+	err = os.WriteFile(filename, data, 0644)
 	return
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -190,7 +189,7 @@ func (s *Supervisor) addOrUpdateProgram(pg Program) error {
 // - Yaml format
 // - Duplicated program
 func (s *Supervisor) readConfigFromDB() (pgs []Program, err error) {
-	data, err := ioutil.ReadFile(s.programPath())
+	data, err := os.ReadFile(s.programPath())
 	if err != nil {
 		data = []byte("")
 	}
@@ -247,7 +246,7 @@ func (s *Supervisor) saveDB() error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(s.programPath(), data, 0644)
+	return os.WriteFile(s.programPath(), data, 0644)
 }
 
 func (s *Supervisor) removeProgram(name string) {
@@ -277,7 +276,7 @@ func (s *Supervisor) renderHTML(w http.ResponseWriter, name string, data interfa
 		panic(err)
 	}
 	defer file.Close()
-	body, _ := ioutil.ReadAll(file)
+	body, _ := io.ReadAll(file)
 
 	if data == nil {
 		wc := WebConfig{}
@@ -397,7 +396,7 @@ func (s *Supervisor) HSelectStartProgram(w http.ResponseWriter, r *http.Request)
 	//glog.Error("zifu 的数据类型是:",reflect.TypeOf(body))
 	//glog.Errorf("zifu 的数据类型是: %T",body)
 
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := io.ReadAll(r.Body)
 	var jsonMap []string
 	json.Unmarshal(body, &jsonMap)
 	for _, v := range jsonMap {
@@ -419,7 +418,7 @@ func (s *Supervisor) HSelectStopProgram(w http.ResponseWriter, r *http.Request) 
 	//glog.Error("zifu 的数据类型是:",reflect.TypeOf(body))
 	//glog.Errorf("zifu 的数据类型是: %T",body)
 
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := io.ReadAll(r.Body)
 	var jsonMap []string
 	json.Unmarshal(body, &jsonMap)
 	for _, v := range jsonMap {
@@ -627,7 +626,7 @@ func (s *Supervisor) hGetConfig(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if proc.ConfigPath != "" {
 			longConfigPath := filepath.Join(proc.Dir, proc.ConfigPath)
-			b, e := ioutil.ReadFile(longConfigPath)
+			b, e := os.ReadFile(longConfigPath)
 			if e != nil {
 				fmt.Println("read file error")
 				return
@@ -644,11 +643,11 @@ func (s *Supervisor) hUpdateConfig(w http.ResponseWriter, r *http.Request) {
 	name := mux.Vars(r)["name"]
 	proc, _ := s.procMap[name]
 	var data []byte
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := io.ReadAll(r.Body)
 	var jsonMap string
 	json.Unmarshal(body, &jsonMap)
 	longConfigPath := filepath.Join(proc.Dir, proc.ConfigPath)
-	if err := ioutil.WriteFile(longConfigPath, []byte(jsonMap), 0666); err != nil {
+	if err := os.WriteFile(longConfigPath, []byte(jsonMap), 0666); err != nil {
 		data, _ = json.Marshal(map[string]interface{}{
 			"status": 1,
 			"error":  fmt.Sprintf("config %s is error", strconv.Quote(name)),

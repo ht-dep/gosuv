@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -244,7 +243,7 @@ func (p *Process) buildCommand() *kexec.KCommand {
 	// 因为lumberjack每次都会创建一个协程处理chan，且不会被关闭，存在协程无法释放问题，所以此处暂不添加日志功能
 
 	var err error
-	fout = ioutil.Discard
+	fout = io.Discard
 	p.OutputFile = &lumberjack.Logger{
 		Filename:   filepath.Join(logDir, "output.log"),
 		MaxSize:    1024,
@@ -256,7 +255,7 @@ func (p *Process) buildCommand() *kexec.KCommand {
 
 	if err != nil {
 		log.Warn("create stdout log failed:", err)
-		fout = ioutil.Discard
+		fout = io.Discard
 	} else {
 		fout = p.OutputFile
 	}

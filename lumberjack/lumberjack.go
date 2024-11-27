@@ -27,7 +27,7 @@ import (
 	"fmt"
 	"github.com/panjf2000/gnet/pool/goroutine"
 	"io"
-	"io/ioutil"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -405,15 +405,22 @@ func (l *Logger) mill() {
 // oldLogFiles returns the list of backup log files stored in the same
 // directory as the current log file, sorted by ModTime
 func (l *Logger) oldLogFiles() ([]logInfo, error) {
-	files, err := ioutil.ReadDir(l.dir())
+	files, err := os.ReadDir(l.dir())
 	if err != nil {
 		return nil, fmt.Errorf("can't read log file directory: %s", err)
 	}
+
+	fInfos := make([]fs.FileInfo, 0, len(files))
+	for _, entry := range files {
+		info, _ := entry.Info()
+		fInfos = append(fInfos, info)
+	}
+
 	logFiles := []logInfo{}
 
 	prefix, ext := l.prefixAndExt()
 
-	for _, f := range files {
+	for _, f := range fInfos {
 		if f.IsDir() {
 			continue
 		}

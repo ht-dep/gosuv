@@ -7,7 +7,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"sort"
@@ -80,7 +80,7 @@ func (cluster *Cluster) requestSlave(url, method string, bodyBuffer *bytes.Buffe
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 func (cluster *Cluster) cmdJoinCluster(w http.ResponseWriter, r *http.Request) {
@@ -200,7 +200,7 @@ func (cluster *Cluster) slaveHttpProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	if body, err := ioutil.ReadAll(resp.Body); err != nil {
+	if body, err := io.ReadAll(resp.Body); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 	} else {
