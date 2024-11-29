@@ -35,7 +35,7 @@ I have been using python-supervisor for many years and there are something uncom
 * [ ] 中文文档
 
 ## Requirements
-Go version at least `1.6+`
+Go version at least `1.20+`
 
 ## Installation
 ### Binaries
