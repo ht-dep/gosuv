@@ -1,5 +1,4 @@
 # gosuv
-[![Build Status](https://travis-ci.org/codeskyblue/gosuv.svg)](https://travis-ci.org/codeskyblue/gosuv)
 
 [中文README](README_ZH.md) 不是很全，能看懂英文的还是尽量看英文
 
@@ -55,11 +54,12 @@ Thanks to [goreleaser](https://github.com/goreleaser/goreleaser) which makes pub
 ### Build from source
 ```sh
 go get -d github.com/codeskyblue/gosuv
-cd $GOPATH/src/github.com/codeskyblue/gosuv
-go generate # package html resources into go
-go build -tags vfs
+cd gosuv/
+go mod tidy
+go build
+
 #### mac打linux包
-export GOOS=linux  && go build -tags vfs
+export GOOS=linux && go build 
 ```
 
 ## Quick start
